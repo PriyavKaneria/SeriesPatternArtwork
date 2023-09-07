@@ -4,42 +4,42 @@
 # square: n = 150,250,300
 # cube: n = ?
 # power: n = 12,20,22,24,27,42 ; seqLength = 500
-# recaman: n = 125,250,725
+# recaman: n = 125,250,725 ; seqLength = 2000
 
 # Config
 r = 300
-n = 25
+n = 100
 delta = 25
 seqLength = 2000
 sequence = "prime"
-logging = True
+logging = False
+changeNMenu = True
+savePostScript = False # Requires PIL
 # Available sequences = ["fibonacci", "prime", "square", "cube", "power", "recaman"]
-
-# Pre-config
-if sequence in ["power"]: # Highly Exponential sequences
-    n = 10
-    delta = 1
-    seqLength = 1000
 
 # Libraries and initial settings
 import turtle as t
 t.speed("fastest")
 t.tracer(0, 0)
 
-inc_button = t.Turtle(shape="triangle")
-inc_button.up()
-inc_button.goto(400, -300)
-inc_button.left(90)
-dec_button = t.Turtle(shape="triangle")
-dec_button.up()
-dec_button.goto(400, -340)
-dec_button.right(90)
-writer = t.Turtle()
-writer.ht()
-writer.up()
-writer.goto(400, -335)
-writer.down()
-writer.write(n, font=("Courier New", 20), align='center')
+if savePostScript:
+    t.setup(r*2 + 204, r*2 + 208)
+
+if changeNMenu:
+    inc_button = t.Turtle(shape="triangle")
+    inc_button.up()
+    inc_button.goto(400, -300)
+    inc_button.left(90)
+    dec_button = t.Turtle(shape="triangle")
+    dec_button.up()
+    dec_button.goto(400, -340)
+    dec_button.right(90)
+    writer = t.Turtle()
+    writer.ht()
+    writer.up()
+    writer.goto(400, -335)
+    writer.down()
+    writer.write(n, font=("Courier New", 20), align='center')
 
 # Memory
 coords = [t.position()]
@@ -221,18 +221,46 @@ def decrease_n(_x, _y):
     n -= delta
     if n <= 0:
         return
-    writer.clear()
-    writer.write(n, font=("Courier New", 20), align='center')
+    if changeNMenu:
+        writer.clear()
+        writer.write(n, font=("Courier New", 20), align='center')
     redraw()
 
 
 # Main pattern code
 redraw()
-inc_button.onclick(increase_n)
-dec_button.onclick(decrease_n)
+if changeNMenu:
+    inc_button.onclick(increase_n)
+    dec_button.onclick(decrease_n)
 
 
 # End
 t.hideturtle()
 t.update()
+
+# PostScript
+if savePostScript:
+    from PIL import Image, EpsImagePlugin
+    from os import path, mkdir, walk, remove
+    import re
+    from time import sleep
+    if not path.exists("saves"):
+        mkdir("saves")
+    _, _, dirFiles = walk("saves").__next__()
+    dirFiles.sort(key=lambda f: int(re.sub('\D', '', f)))
+    if len(dirFiles) > 0:
+        lastFile = dirFiles[-1]
+        lastFile = int(re.sub('\D', '', lastFile))
+        lastFile += 1
+    else:
+        lastFile = 1
+    print("Saving image...")
+    t.getscreen().getcanvas().postscript(file=f"./saves/pattern_{lastFile}.ps")
+    sleep(1)
+    img = Image.open(f"./saves/pattern_{lastFile}.ps")
+    img.save(f"./saves/pattern_{lastFile}.png", "png")
+    img.close()
+    remove(f"./saves/pattern_{lastFile}.ps")
+    print("Done!")
+
 t.done()

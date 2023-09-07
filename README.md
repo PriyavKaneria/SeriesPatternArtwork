@@ -12,3 +12,25 @@ The sequences used were:
 6. Recaman Sequence
 
 > If you want to, please feel free to add more sequences to the code. Try them out with different values of "n" and share the results. If the patters are really interesting, add them to the best configs comment along with images in the screenshots folder. Also send a PR with the updated sequence classes so I can review and merge it for everyone.
+
+## Requirements
+1. Python 3.6+
+
+### If you want to save the image, you will need to install Pillow and setup the path in the code
+1. Install Pillow using pip
+```bash
+pip install pillow
+```
+2. Install Ghostscript from [here](https://www.ghostscript.com/download/gsdnld.html)
+2. Setup the path in the code if you have a custom installation and not added to system path
+```python
+EpsImagePlugin.gs_windows_binary =  r'[Enter the path to exe]'
+```
+
+## How to run the code
+1. Clone the repo
+2. Set your configuration options if any or run as it is
+3. Run the pattern.py file
+```bash
+python pattern.py
+```
